@@ -1,0 +1,13 @@
+backup
+logs
+private
+public/sites/*/files
+
+# Ignore OS generated files #
+######################
+.DS_Store*
+thumbs.db
+Icon
+Thumbs.db
+._*
+.idea

@@ -1,0 +1,6 @@
+name = Bridges Hide Event
+description = Hides the event field from the add submission and add movie submission form (make sure to set the default appropriately!) 
+
+core = 7.x
+
+

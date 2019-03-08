@@ -1,0 +1,4 @@
+name = Bridges Import
+description = Creates nodes from Bridges/JMM content
+
+core = 7.x

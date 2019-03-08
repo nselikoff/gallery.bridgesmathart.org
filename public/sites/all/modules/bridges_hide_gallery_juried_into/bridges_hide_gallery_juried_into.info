@@ -1,0 +1,6 @@
+name = Bridges Hide Gallery Juried Into
+description = Hides the Gallery Juried Into field from the add submission form 
+
+core = 7.x
+
+

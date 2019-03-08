@@ -1,0 +1,633 @@
+<?php
+/**
+ * @file
+ * Creates nodes from Bridges/JMM content
+ */
+
+function bridges_import_menu() {
+    $items['bridges_import'] = array(
+      'title'=>'Bridges Import',
+      'description'=>'Bridges Import',
+      'page callback' => 'bridges_import_do_it',
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM
+    );
+    return $items;
+  }
+
+function _import_users() {
+    db_set_active('bridges2010');
+    $old_users = db_query("SELECT * FROM {users} WHERE status = '1' AND uid > 1 ORDER BY uid ASC");
+    db_set_active('default');
+    $new_users = db_query("SELECT * FROM users WHERE status = '1' AND uid > 1 ORDER BY uid ASC");
+
+/*	$old_users_array = array();
+	$new_users_array = array();
+	foreach ($old_users as $record)
+		$old_users_array[] = $record->name;
+	foreach ($new_users as $record)
+		$new_users_array[] = $record->name;
+	$users_to_add = array_diff($old_users_array, $new_users_array);
+	print_r($users_to_add);	*/
+	/*
+	foreach ($old_users as $record) {
+		if ($record->name == 'Edith Kiss' || $record->name == 'fenyvesikristof') {
+        	$nid = db_insert('users') // Table name no longer needs {}
+                        ->fields(array(
+                            'uid' => $record->uid,
+                            'name' => $record->name,
+                            'pass' => $record->pass,
+                            'mail' => $record->mail,
+                            'theme' => $record->theme,
+                            'signature' => $record->signature,
+                            'signature_format' => $record->signature_format,
+                            'created' => $record->created,
+                            'access' => $record->access,
+                            'login' => $record->login, // 0 for never login
+                            'status' => '1',
+                            'timezone' =>$record->timezone,
+                            'language' => 'und',
+                            'picture' => '0',
+                            'init' => '0',
+                            'data' =>''
+                        ))
+                        ->execute();
+				}
+			}*/
+    return 'finish migrate users!';
+}
+
+function _submission_pass_art2010() {
+	
+	db_set_active('bridges2010');
+	$result = db_query("SELECT 
+			node.uid AS uid,
+			users.name AS name,
+			node.title AS title, 
+			fields.field_position_value AS position,
+			fields.field_affiliation_value AS affiliation,
+			fields.field_location_value AS location,
+			fields.field_email_email AS email,
+			fields.field_website_url AS website,
+			fields.field_statement_value AS statement
+			FROM node 
+			LEFT JOIN users ON node.uid = users.uid
+			LEFT JOIN content_type_submission fields ON node.vid = fields.vid 
+			WHERE node.type = 'submission'
+			AND users.status = 1
+			ORDER BY node.uid ASC");
+	db_set_active('default');
+	
+	foreach ($result as $record) {
+		$last_space = strrpos($record->title, ' ');
+		$first_name = substr($record->title, 0, $last_space);
+		$last_name = substr($record->title, $last_space + 1, strlen($record->title) - $last_space);
+
+		$name = str_replace(' ', '_', strtolower($record->name));
+		if (function_exists('transliteration_get')) {
+		  $name = transliteration_get($name);
+		}
+
+//		echo "$record->uid<br/>$name<br/>$record->title<br/>$first_name $last_name<br/>$record->position<br/>$record->affiliation<br/>$record->location<br/>$record->email<br/>$record->website<br/>$record->statement<br/>$filepath<br/><br/>";
+
+		echo "Creating a node for $name...<br/>";
+
+		$node = new stdClass();
+		$node->type = "submission";
+		node_object_prepare($node); // Set some default values.
+		$node->title = $record->title;
+		$node->language = LANGUAGE_NONE;
+		$node->uid = $record->uid;
+		$node->status = 1; // published
+
+		//echo "Adding fields...<br/>";
+
+		// Let's add some CCK/Fields API field. This is pretty similar to the body example 
+		// don't add if no data?
+		$node->field_first_name[$node->language][0]['value'] = $first_name;
+		$node->field_last_name[$node->language][0]['value'] = $last_name;
+		$node->field_position[$node->language][0]['value'] = $record->position;
+		$node->field_affiliation[$node->language][0]['value'] = $record->affiliation;
+		$node->field_location[$node->language][0]['value'] = $record->location;
+		$node->field_email[$node->language][0]['email'] = $record->email;
+		$node->field_website[$node->language][0]['url'] = $record->website;
+		$node->field_statement[$node->language][0]['value'] = $record->statement;
+
+		// assign the JMM 2011 event
+		$node->field_event[$node->language][]['tid'] = 3;
+
+		//echo "Saving the node...\n";
+
+		// save the node
+		$node = node_submit($node); // Prepare node for a submit
+		node_save($node); // After this call we'll get a nid
+
+		echo "Done!<br/><br/>";
+	}
+
+	return 'Submission Pass OK!';
+}
+
+function _submission_pass_jmm() {
+	
+	db_set_active('jmm');
+	$result = db_query("SELECT 
+			node.uid AS uid,
+			users.name AS name,
+			node.title AS title, 
+			fields.field_position_value AS position,
+			fields.field_affiliation_value AS affiliation,
+			fields.field_location_value AS location,
+			fields.field_email_email AS email,
+			fields.field_website_url AS website,
+			fields.field_statement_value AS statement
+			FROM node 
+			LEFT JOIN users ON node.uid = users.uid
+			LEFT JOIN content_type_submission fields ON node.vid = fields.vid 
+			WHERE node.type = 'submission'
+			AND users.status = 1
+			ORDER BY node.uid ASC");
+	db_set_active('default');
+	
+	foreach ($result as $record) {
+		$last_space = strrpos($record->title, ' ');
+		$first_name = substr($record->title, 0, $last_space);
+		$last_name = substr($record->title, $last_space + 1, strlen($record->title) - $last_space);
+
+		$name = str_replace(' ', '_', strtolower($record->name));
+		if (function_exists('transliteration_get')) {
+		  $name = transliteration_get($name);
+		}
+
+//		echo "$record->uid<br/>$name<br/>$record->title<br/>$first_name $last_name<br/>$record->position<br/>$record->affiliation<br/>$record->location<br/>$record->email<br/>$record->website<br/>$record->statement<br/>$filepath<br/><br/>";
+
+		echo "Creating a node for $name...<br/>";
+
+		$node = new stdClass();
+		$node->type = "submission";
+		node_object_prepare($node); // Set some default values.
+		$node->title = $record->title;
+		$node->language = LANGUAGE_NONE;
+		$node->uid = $record->uid;
+		$node->status = 1; // published
+
+		//echo "Adding fields...<br/>";
+
+		// Let's add some CCK/Fields API field. This is pretty similar to the body example 
+		// don't add if no data?
+		$node->field_first_name[$node->language][0]['value'] = $first_name;
+		$node->field_last_name[$node->language][0]['value'] = $last_name;
+		$node->field_position[$node->language][0]['value'] = $record->position;
+		$node->field_affiliation[$node->language][0]['value'] = $record->affiliation;
+		$node->field_location[$node->language][0]['value'] = $record->location;
+		$node->field_email[$node->language][0]['email'] = $record->email;
+		$node->field_website[$node->language][0]['url'] = $record->website;
+		$node->field_statement[$node->language][0]['value'] = $record->statement;
+
+		// assign the JMM 2011 event
+		$node->field_event[$node->language][]['tid'] = 2;
+
+		//echo "Saving the node...\n";
+
+		// save the node
+		$node = node_submit($node); // Prepare node for a submit
+		node_save($node); // After this call we'll get a nid
+
+		echo "Done!<br/><br/>";
+	}
+	
+	return 'Submission Pass OK!';
+}
+
+function _submission_pass() {
+		// query old database for published artist profiles
+		db_set_active('bridges2011');
+		$result = db_query("SELECT 
+		node.uid AS uid,
+		users.name AS name,
+		node.title AS title, 
+		fields.field_first_name_value AS first_name,
+		fields.field_last_name_value AS last_name,
+		fields.field_extended_name_value AS extended_name,
+		fields.field_position_value AS position,
+		fields.field_affiliation_value AS affiliation,
+		fields.field_location_value AS location,
+		emails.field_email_email AS email,
+		websites.field_website_url AS website,
+		fields.field_statement_value AS statement,
+		files.filepath AS filepath
+		FROM node 
+		LEFT JOIN users ON node.uid = users.uid
+		LEFT JOIN content_field_image thumbs ON node.vid = thumbs.vid
+		LEFT JOIN content_type_submission fields ON node.vid = fields.vid 
+		LEFT JOIN content_field_email emails ON node.vid = emails.vid AND emails.delta = 0
+		LEFT JOIN content_field_website websites ON node.vid = websites.vid AND websites.delta = 0
+		LEFT JOIN files ON thumbs.field_image_fid = files.fid
+		WHERE node.type = 'submission' 
+		AND (node.status <> 0) 
+		ORDER BY node.uid ASC");
+		db_set_active('default');
+
+		// insert into the new installation
+		foreach($result as $record ) {
+
+			$name = str_replace(' ', '_', strtolower($record->name));
+			if (function_exists('transliteration_get')) {
+			  $name = transliteration_get($name);
+			}
+
+			$filepath = "/Volumes/Data/Clients/Bridges/art2011.submit/" . $record->filepath;
+
+	//		echo "$record->uid<br/>$name<br/>$record->title<br/>$record->first_name $record->last_name<br/>$record->extended_name<br/>$record->position<br/>$record->affiliation<br/>$record->location<br/>$record->email<br/>$record->website<br/>$record->statement<br/>$filepath<br/><br/>";
+
+			$directory = 'public://' . "$name/bridges-2011";
+			$directory_ok = file_prepare_directory(&$directory, $options = FILE_CREATE_DIRECTORY);
+
+			echo "Creating a node for $name...<br/>";
+
+			$node = new stdClass();
+			$node->type = "submission";
+			node_object_prepare($node); // Set some default values.
+			$node->title = $record->title;
+			$node->language = LANGUAGE_NONE;
+			$node->uid = $record->uid;
+			$node->status = 1; // published
+
+			//echo "Adding fields...<br/>";
+
+			// Let's add some CCK/Fields API field. This is pretty similar to the body example 
+			// don't add if no data?
+			$node->field_first_name[$node->language][0]['value'] = $record->first_name;
+			$node->field_last_name[$node->language][0]['value'] = $record->last_name;
+			$node->field_extended_name[$node->language][0]['value'] = $record->extended_name;
+			$node->field_position[$node->language][0]['value'] = $record->position;
+			$node->field_affiliation[$node->language][0]['value'] = $record->affiliation;
+			$node->field_location[$node->language][0]['value'] = $record->location;
+			$node->field_email[$node->language][0]['email'] = $record->email;
+			$node->field_website[$node->language][0]['url'] = $record->website;
+			$node->field_statement[$node->language][0]['value'] = $record->statement;
+
+			//echo "Adding an image...";
+
+			// Some file on our system
+			$file_path = drupal_realpath($filepath);
+			$file = (object) array(
+			          'uid' => $record->uid,
+			          'uri' => $file_path,
+			          'filemime' => file_get_mimetype($file_path),
+			          'status' => 1,
+			 ); 
+			$basename = basename($file_path);
+			$basename = str_replace(' ', '_', $basename);
+			$basename = transliteration_get($basename);
+			$file = file_copy($file, $directory . '/' . $basename);
+			$node->field_thumbnail[LANGUAGE_NONE][0] = (array)$file; //associate the file object with the image field:
+
+			// assign the Bridges 2011 event
+			$node->field_event[$node->language][]['tid'] = 1;
+
+			//echo "Saving the node...\n";
+
+			// save the node
+			$node = node_submit($node); // Prepare node for a submit
+			node_save($node); // After this call we'll get a nid
+
+			echo "Done!<br/><br/>";
+
+		}
+	return "Submission Pass OK!<br/>";
+}
+
+function _artwork_pass() {
+
+	// query old database for published artwork
+	db_set_active('bridges2011');
+	$result = db_query("SELECT 
+	node.uid AS uid,
+	users.name AS name,
+	node.title AS title, 
+	fields.field_medium_value AS medium,
+	fields.field_dimensions_value AS dimensions,
+	fields.field_year_value AS year,
+	fields.field_description_value AS description,
+	fields.field_order_value AS artwork_order,
+	files.filepath AS filepath
+	FROM node 
+	LEFT JOIN users ON node.uid = users.uid
+	LEFT JOIN content_field_image thumbs ON node.vid = thumbs.vid
+	LEFT JOIN content_type_artwork fields ON node.vid = fields.vid 
+	LEFT JOIN files ON thumbs.field_image_fid = files.fid
+	WHERE node.type = 'artwork' 
+	AND (node.status <> 0) 
+	ORDER BY node.uid,fields.field_order_value ASC");
+	db_set_active('default');
+
+	// insert into the new installation
+	foreach($result as $record ) {
+
+		$name = str_replace(' ', '_', strtolower($record->name));
+		if (function_exists('transliteration_get')) {
+		  $name = transliteration_get($name);
+		}
+
+		$filepath = "/Volumes/Data/Clients/Bridges/art2011.submit/" . $record->filepath;
+
+//		echo "$record->uid<br/>$name<br/>$record->title<br/>$record->medium $record->dimensions<br/>$record->year<br/>$record->description<br/>$record->artwork_order<br/>$filepath<br/><br/>";
+
+		echo "Loading the node...\n";
+		$query = new EntityFieldQuery();
+		$entities = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'submission')
+			->propertyCondition('uid', $record->uid)
+			->execute();        
+		$nodes = node_load_multiple(array_keys($entities['node']));
+		foreach ($nodes as $node) {
+			$directory = 'public://' . "$name/bridges-2011";
+			$directory_ok = file_prepare_directory(&$directory, $options = FILE_CREATE_DIRECTORY);
+
+			echo "Creating the artwork field collection...\n";
+
+			$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_artwork'));
+			$field_collection_item->setHostEntity('node', $node);
+			$field_collection_item->field_title[LANGUAGE_NONE][]['value'] = $record->title;
+			$field_collection_item->field_dimensions[LANGUAGE_NONE][]['value'] = $record->dimensions;
+			$field_collection_item->field_medium[LANGUAGE_NONE][]['value'] = $record->medium;
+			$field_collection_item->field_year[LANGUAGE_NONE][]['value'] = $record->year;
+			$field_collection_item->field_description[LANGUAGE_NONE][]['value'] = $record->description;
+
+			$file_path = drupal_realpath($filepath);
+			$file = (object) array(
+			          'uid' => $record->uid,
+			          'uri' => $file_path,
+			          'filemime' => file_get_mimetype($file_path),
+			          'status' => 1,
+			 ); 
+			$basename = basename($file_path);
+			$basename = str_replace(' ', '_', $basename);
+			$basename = transliteration_get($basename);
+			$file = file_copy($file, $directory . '/' . $basename);
+			$field_collection_item->field_artwork_image[LANGUAGE_NONE][0] = (array)$file; //associate the file object with the image field:
+
+			$field_collection_item->save();
+		}
+	}
+	return "Artwork Pass OK!";
+}
+
+function _artwork_pass_jmm() {
+
+	// query old database for published artwork
+	db_set_active('jmm');
+	$result = db_query("SELECT 
+		node.uid AS uid,
+		users.name AS name,
+		node.title AS title, 
+		fields.field_medium_value AS medium,
+		fields.field_dimensions_value AS dimensions,
+		fields.field_year_value AS year,
+		fields.field_description_value AS description,
+		fields.field_order_value AS artwork_order,
+		files.filepath AS filepath
+		FROM node 
+		LEFT JOIN users ON node.uid = users.uid
+		LEFT JOIN content_type_artwork fields ON node.vid = fields.vid 
+		LEFT JOIN files ON fields.field_image_fid = files.fid
+		WHERE node.type = 'artwork' 
+		ORDER BY node.uid,fields.field_order_value ASC");
+	db_set_active('default');
+
+	// insert into the new installation
+	foreach($result as $record ) {
+
+		$name = str_replace(' ', '_', strtolower($record->name));
+		if (function_exists('transliteration_get')) {
+		  $name = transliteration_get($name);
+		}
+
+		$filepath = "/Volumes/Data/Clients/Bridges/jmm.submit/" . $record->filepath;
+
+//		echo "$record->uid<br/>$name<br/>$record->title<br/>$record->medium $record->dimensions<br/>$record->year<br/>$record->description<br/>$record->artwork_order<br/>$filepath<br/><br/>";
+
+		echo "Loading the node for $name...\n";
+		$query = new EntityFieldQuery();
+		$entities = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'submission')
+			->propertyCondition('uid', $record->uid)
+			->fieldCondition('field_event', 'tid', '2')
+			->execute();        
+		$nodes = node_load_multiple(array_keys($entities['node']));
+		foreach ($nodes as $node) {
+			
+			$directory = 'public://' . "$name/jmm-2011";
+			$directory_ok = file_prepare_directory(&$directory, $options = FILE_CREATE_DIRECTORY);
+
+			echo "Creating the artwork field collection...\n";
+
+			$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_artwork'));
+			$field_collection_item->setHostEntity('node', $node);
+			$field_collection_item->field_title[LANGUAGE_NONE][]['value'] = $record->title;
+			$field_collection_item->field_dimensions[LANGUAGE_NONE][]['value'] = $record->dimensions;
+			$field_collection_item->field_medium[LANGUAGE_NONE][]['value'] = $record->medium;
+			$field_collection_item->field_year[LANGUAGE_NONE][]['value'] = $record->year;
+			$field_collection_item->field_description[LANGUAGE_NONE][]['value'] = $record->description;
+
+			$file_path = drupal_realpath($filepath);
+			$file = (object) array(
+			          'uid' => $record->uid,
+			          'uri' => $file_path,
+			          'filemime' => file_get_mimetype($file_path),
+			          'status' => 1,
+			 ); 
+			$basename = basename($file_path);
+			$basename = str_replace(' ', '_', $basename);
+			$basename = transliteration_get($basename);
+			$file = file_copy($file, $directory . '/' . $basename);
+			$field_collection_item->field_artwork_image[LANGUAGE_NONE][0] = (array)$file; //associate the file object with the image field:
+
+			$field_collection_item->save();
+		}
+	}
+	return "Artwork Pass OK!";
+}
+
+function _artwork_pass_art2010() {
+
+	// query old database for published artwork
+	db_set_active('bridges2010');
+	$result = db_query("SELECT 
+			node.uid AS uid,
+			users.name AS name,
+			node.title AS title, 
+			fields.field_medium_value AS medium,
+			fields.field_dimensions_value AS dimensions,
+			fields.field_year_value AS year,
+			fields.field_description_value AS description,
+			fields.field_order_value AS artwork_order,
+			files.filepath AS filepath
+			FROM node 
+			LEFT JOIN users ON node.uid = users.uid
+			LEFT JOIN content_type_artwork fields ON node.vid = fields.vid 
+			LEFT JOIN files ON fields.field_image_fid = files.fid
+			WHERE node.type = 'artwork' 
+			AND node.uid > 65
+			ORDER BY node.uid,fields.field_order_value ASC");
+	db_set_active('default');
+
+	// insert into the new installation
+	foreach($result as $record ) {
+
+		$name = str_replace(' ', '_', strtolower($record->name));
+		if (function_exists('transliteration_get')) {
+		  $name = transliteration_get($name);
+		}
+
+		$filepath = "/Volumes/Data/Clients/Bridges/art2010.submit/" . $record->filepath;
+
+//		echo "$record->uid<br/>$name<br/>$record->title<br/>$record->medium $record->dimensions<br/>$record->year<br/>$record->description<br/>$record->artwork_order<br/>$filepath<br/><br/>";
+
+		echo "Loading the node for $name...\n";
+		$query = new EntityFieldQuery();
+		$entities = $query->entityCondition('entity_type', 'node')
+			->entityCondition('bundle', 'submission')
+			->propertyCondition('uid', $record->uid)
+			->fieldCondition('field_event', 'tid', '3')
+			->execute();        
+		$nodes = node_load_multiple(array_keys($entities['node']));
+		foreach ($nodes as $node) {
+			
+			$directory = 'public://' . "$name/bridges-2010";
+			$directory_ok = file_prepare_directory(&$directory, $options = FILE_CREATE_DIRECTORY);
+
+			echo "Creating the artwork field collection...\n";
+
+			$field_collection_item = entity_create('field_collection_item', array('field_name' => 'field_artwork'));
+			$field_collection_item->setHostEntity('node', $node);
+			$field_collection_item->field_title[LANGUAGE_NONE][]['value'] = $record->title;
+			$field_collection_item->field_dimensions[LANGUAGE_NONE][]['value'] = $record->dimensions;
+			$field_collection_item->field_medium[LANGUAGE_NONE][]['value'] = $record->medium;
+			$field_collection_item->field_year[LANGUAGE_NONE][]['value'] = $record->year;
+			$field_collection_item->field_description[LANGUAGE_NONE][]['value'] = $record->description;
+
+			$file_path = drupal_realpath($filepath);
+			$file = (object) array(
+			          'uid' => $record->uid,
+			          'uri' => $file_path,
+			          'filemime' => file_get_mimetype($file_path),
+			          'status' => 1,
+			 ); 
+			$basename = basename($file_path);
+			$basename = str_replace(' ', '_', $basename);
+			$basename = transliteration_get($basename);
+			$file = file_copy($file, $directory . '/' . $basename);
+			$field_collection_item->field_artwork_image[LANGUAGE_NONE][0] = (array)$file; //associate the file object with the image field:
+
+			$field_collection_item->save();
+		}
+	}
+	return "Artwork Pass OK!";
+}
+
+function _create_thumbs_bridges2010() {
+	// loop through all published bridges2010 submissions
+	$query = new EntityFieldQuery();
+	$entities = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'submission')
+		->fieldCondition('field_event', 'tid', '3') // bridges2010
+		->execute();        
+	$nodes = node_load_multiple(array_keys($entities['node']));
+
+	// for each one,
+	foreach ($nodes as $node) {
+		
+		echo "Creating thumbnail for " . $node->title . "<br/>";
+	
+		// get the filepath of the first artwork
+		$artwork_entity_id = $node->field_artwork[LANGUAGE_NONE][0]['value'];
+		$artworks = entity_load('field_collection_item', (array)$artwork_entity_id);
+		$filepath = $artworks[$artwork_entity_id]->field_artwork_image[LANGUAGE_NONE][0]['uri'];
+		$dirname = dirname($filepath);
+		$thumbnailpath = "$dirname/thumbnail.jpg";
+
+		// first copy the image as thumbnail.jpg in the same directory
+		$file = (object) array(
+		          'uid' => $node->uid,
+		          'uri' => $filepath,
+		          'filemime' => file_get_mimetype($filepath),
+		          'status' => 1,
+		 ); 
+		$file = file_copy($file, $thumbnailpath);
+		
+		// then scale and crop it
+		$image = image_load($thumbnailpath);
+		image_scale_and_crop($image, 100, 100);
+		image_save($image);
+		
+		// then associate it with the node
+		$node->field_thumbnail[LANGUAGE_NONE][0] = (array)$file;
+		node_save($node);
+		
+	}
+	
+	return "Thumbs created OK!";
+}
+
+function _create_thumbs_jmm() {
+	// loop through all published bridges2010 submissions
+	$query = new EntityFieldQuery();
+	$entities = $query->entityCondition('entity_type', 'node')
+		->entityCondition('bundle', 'submission')
+		->fieldCondition('field_event', 'tid', '2') // jmm
+		->execute();        
+	$nodes = node_load_multiple(array_keys($entities['node']));
+
+	// for each one,
+	foreach ($nodes as $node) {
+		
+		echo "Creating thumbnail for " . $node->title . "<br/>";
+	
+		// get the filepath of the first artwork
+		$artwork_entity_id = $node->field_artwork[LANGUAGE_NONE][0]['value'];
+		$artworks = entity_load('field_collection_item', (array)$artwork_entity_id);
+		$filepath = $artworks[$artwork_entity_id]->field_artwork_image[LANGUAGE_NONE][0]['uri'];
+		$dirname = dirname($filepath);
+		$thumbnailpath = "$dirname/thumbnail.jpg";
+
+		// first copy the image as thumbnail.jpg in the same directory
+		$file = (object) array(
+		          'uid' => $node->uid,
+		          'uri' => $filepath,
+		          'filemime' => file_get_mimetype($filepath),
+		          'status' => 1,
+		 ); 
+		$file = file_copy($file, $thumbnailpath);
+		
+		// then scale and crop it
+		$image = image_load($thumbnailpath);
+		image_scale_and_crop($image, 100, 100);
+		image_save($image);
+		
+		// then associate it with the node
+		$node->field_thumbnail[LANGUAGE_NONE][0] = (array)$file;
+		node_save($node);
+		
+	}
+	
+	return "Thumbs created OK!";
+}
+
+
+function bridges_import_do_it() {
+
+//	echo _import_users();
+//	echo _submission_pass(); 
+//	echo _artwork_pass();
+	
+//	echo _submission_pass_jmm();
+//	echo _artwork_pass_jmm();
+	
+//	echo _submission_pass_art2010();
+//	echo _artwork_pass_art2010();
+
+//	echo _create_thumbs_bridges2010();
+//	echo _create_thumbs_jmm();
+}

@@ -1,0 +1,25 @@
+/**
+ * @file
+ * Views Styling
+ */
+
+.view-exhibitions {
+	border-bottom:1px #ccc solid;	
+}
+
+.view-exhibitions .views-view-grid td, .view-submissions .views-view-grid td {
+	vertical-align:top;
+	text-align:center;
+	width:14.29%;
+	padding-bottom:2.0em;
+	font-size:0.9em;
+}
+
+.view-my-submissions table, .view-my-short-movie-submission table {
+	width: 100%;
+}
+
+.view-artworks-for-long-exhibition td {
+	font-size:0.85em;
+	padding: 0 5px;
+}

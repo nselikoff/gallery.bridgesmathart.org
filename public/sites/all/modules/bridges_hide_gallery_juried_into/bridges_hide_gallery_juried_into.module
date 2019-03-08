@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file
+ * Hides the gallery juried into field from the add submission form
+ */
+
+/**
+ * Implementation of HOOK_form_FORM_ID_alter()
+ */
+function bridges_hide_gallery_juried_into_form_submission_node_form_alter(&$form, $form_state, $form_id) {
+  $form['field_gallery_juried_into']['#access']=FALSE;
+
+  $path = drupal_get_path('module', 'bridges_hide_gallery_juried_into');
+}
+
+
+

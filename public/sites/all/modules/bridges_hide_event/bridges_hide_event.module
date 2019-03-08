@@ -1,0 +1,53 @@
+<?php
+/**
+ * @file
+ * Hides the event field from the add submission and add movie submission form
+ */
+
+/**
+ * Implementation of HOOK_form_FORM_ID_alter()
+ */
+function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state, $form_id) {
+  $form['field_event']['#access']=FALSE;
+
+  $path = drupal_get_path('module', 'bridges_hide_event');
+$form['#attached'] = array
+(
+	'js' => array
+	(
+		'type' => 'file',
+		'data' => $path . '/form.js',
+	),
+);
+
+$form['terms_of_use'] = array(
+	'#type' => 'checkbox',
+	'#title' => t("I have read and agree to these conditions."),
+	'#required' => TRUE,
+	'#weight' => 30,
+);
+
+}
+
+
+function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_state, $form_id) {
+  $form['field_event']['#access']=FALSE;
+  $path = drupal_get_path('module', 'bridges_hide_event');
+$form['#attached'] = array
+(
+    'js' => array
+    (
+        'type' => 'file',
+        'data' => $path . '/form.js',
+    ),
+);
+
+$form['terms_of_use'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("I have read and agree to these conditions."),
+    '#required' => TRUE,
+    '#weight' => 30,
+);
+
+}
+

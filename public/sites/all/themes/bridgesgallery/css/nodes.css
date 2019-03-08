@@ -1,0 +1,124 @@
+/**
+ * @file
+ * Node Styling
+ *
+ * Style anything that isn't in the $content variable.
+ */
+
+
+.node /* Node wrapper */ {
+}
+
+.preview .node /* Preview of the content before submitting new or updated content */ {
+  /* background-color: #ffffea; */ /* Drupal core uses a #ffffea background */
+}
+
+.node-promoted /* A node that has been promoted to the front page */ {
+}
+
+.node-sticky /* A sticky node (displayed before others in a list) */ {
+}
+
+.node-unpublished /* Unpublished nodes */ {
+  background-color: #fff;  /* Drupal core uses a #fff4f4 background */
+}
+
+.node-unpublished div.unpublished,
+.comment-unpublished div.unpublished /* The word "Unpublished" displayed underneath the content. */ {
+  height: 0;
+  overflow: visible;
+  color: #d8d8d8;
+  font-size: 75px;
+  line-height: 1;
+  font-family: Impact, "Arial Narrow", Helvetica, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  word-wrap: break-word; /* A very nice CSS3 property */
+}
+
+.node-by-viewer /* A node created by the current user */ {
+}
+
+.node-teaser /* A node displayed as teaser */ {
+}
+
+/* All nodes are given a node-FOO class that describes the type of content that
+ * it is. If you create a new content type called "my-custom-type", it will
+ * receive a "node-my-custom-type" class.
+ */
+.node-page /* Page content node */ {
+}
+
+.node-article /* Article content node */ {
+}
+
+h2.node-title /* Node title */ {
+}
+
+.node .user-picture /* The picture of the node author */ {
+}
+
+.node .submitted /* The "posted by" information */ {
+}
+
+.node .content /* Node's content wrapper */ {
+}
+
+.node ul.links /* Node links. See also the ul.links declaration in the pages.css. */ {
+}
+
+.node-submission .field-name-field-position,
+.node-submission .field-name-field-affiliation,
+.node-submission .field-name-field-location,
+.node-submission .field-name-field-email,
+.node-submission .field-name-field-website,
+.node-movie-submission .field-name-field-position,
+.node-movie-submission .field-name-field-affiliation,
+.node-movie-submission .field-name-field-location,
+.node-movie-submission .field-name-field-email,
+.node-movie-submission .field-name-field-website
+{
+	font-size:0.8em;
+	line-height:1.2;
+	color:#777;
+}
+
+.node-submission .field-name-field-artwork-image,
+.node-submission .field-name-field-title,
+.node-submission .field-name-field-dimensions,
+.node-submission .field-name-field-computed-dimensions,
+.node-submission .field-name-field-medium,
+.node-submission .field-name-field-year,
+.node-movie-submission .field-name-field-movie-image,
+.node-movie-submission .field-name-field-title,
+.node-movie-submission .field-name-field-length,
+.node-movie-submission .field-name-field-credits,
+.node-movie-submission .field-name-field-year
+{
+	font-size:0.8em;
+	text-align:center;
+	line-height:1.2;
+}
+
+.node-movie-submission .field-name-field-public-movie-link
+{
+	text-align: center;
+}
+
+.node-submission .field-name-field-statement,
+.node-movie-submission .field-name-field-statement
+{
+	margin:2.0em 0;	
+}
+
+.node-submission .field-name-field-description,
+.node-movie-submission .field-name-field-description
+{
+	margin:1.0em 0;
+}
+
+/* hide "UNPUBLISHED" */
+div.unpublished {
+	display: none;
+}
