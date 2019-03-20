@@ -3,6 +3,11 @@ logs
 private
 public/sites/*/files
 
+# used for local dev environment in docker container
+public/sites/default/settings.php
+mariadb-init/*
+mariadb-data/*
+
 # Ignore OS generated files #
 ######################
 .DS_Store*
