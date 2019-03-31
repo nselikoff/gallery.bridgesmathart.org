@@ -76,4 +76,9 @@ function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $for
     $form['field_fashion_items']['und']['add_more']['#suffix'] = '</div>';
   }
 
+  // Similar for collection images
+  if (isset($form['field_collection_images']['und']['#max_delta']) && $form['field_collection_images']['und']['#max_delta'] == 1) {
+    $form['field_collection_images']['und']['add_more']['#prefix'] = '<div style="display:none">';
+    $form['field_collection_images']['und']['add_more']['#suffix'] = '</div>';
+  }
 }
