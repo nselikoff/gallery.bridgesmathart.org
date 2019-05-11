@@ -11,6 +11,7 @@ TBD
 * start docker
 * run `docker-compose up`
 * access the site at http://drupal.docker.localhost:8000/
+* mariadb is configured to persist data to `mariadb-data` and is accessible on port 33306
 
 ### Upgrade Drupal or modules
 
