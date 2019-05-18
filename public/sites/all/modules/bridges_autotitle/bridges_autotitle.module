@@ -1,0 +1,48 @@
+<?php
+/**
+ * @file
+ * Creates an autotitle token for use in submission titles (extended name or first/last name)
+ */
+
+/**
+ * Implementation of hook_token_info()
+ */
+function bridges_autotitle_token_info() {
+  // Define token value, autotitle is the token will be used as [node:autotitle]
+  $node_autotitle['autotitle'] =  array(
+    'name' => t("Automatic submission title"),
+    'description' => t("Use extended name if provided, otherwise use first and last name"),
+  );
+
+  // Return associative array of tokens & token types
+  return array(
+    'tokens' => array(
+      'node' => $node_autotitle,
+    ),
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function bridges_autotitle_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+
+  // Check if token type is node
+  if($type == 'node'){
+    $node_wrapper = entity_metadata_wrapper('node', $data['node']);
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        // Check token is autotitle
+        case 'autotitle':
+          $extended_name = $node_wrapper->field_extended_name->value();
+          $first_name = $node_wrapper->field_first_name->value();
+          $last_name = $node_wrapper->field_last_name->value();
+
+          $replacements[$original] = empty($extended_name) ? $first_name . " " . $last_name : $extended_name;
+          break;
+      }
+    }
+  }
+  return $replacements;
+}

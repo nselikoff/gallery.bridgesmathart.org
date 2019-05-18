@@ -1,0 +1,6 @@
+name = Bridges Autotitle
+description = Creates an autotitle token for use in submission titles (extended name or first/last name)
+
+core = 7.x
+
+
