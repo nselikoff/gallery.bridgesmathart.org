@@ -2,6 +2,7 @@
 /**
  * @file
  * Hides the event field from the add submission and add movie submission form
+ * Adds required checkboxes that aren't actually part of the content type
  */
 
 /**
@@ -19,12 +20,27 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   ),
  );
 
+  $form['delivery_pickup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
+    '#required' => TRUE,
+    '#weight' => 30,
+  );
+
   $form['terms_of_use'] = array(
-   '#type' => 'checkbox',
-   '#title' => t("I have read and agree to these conditions."),
-   '#required' => TRUE,
-   '#weight' => 30,
- );
+    '#type' => 'checkbox',
+    '#title' => t("I have read and agree to all of the conditions outlined above."),
+    '#required' => TRUE,
+    '#weight' => 30,
+  );
+
+  // artworks are set to unlimited so we get the "add more" button
+  // but we want to limit to [2 for Bridges/JMM, 5 for ICERM], so hide the button when we get to 8
+  // set to N - 1
+  if (isset($form['field_artwork']['und']['#max_delta']) && $form['field_artwork']['und']['#max_delta'] == 4) {
+    $form['field_artwork']['und']['add_more']['#prefix'] = '<div style="display:none">';
+    $form['field_artwork']['und']['add_more']['#suffix'] = '</div>';
+  }
 
 }
 
@@ -41,9 +57,16 @@ function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_
     ),
   );
 
+  $form['delivery_pickup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
+    '#required' => TRUE,
+    '#weight' => 30,
+  );
+
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
-    '#title' => t("I have read and agree to these conditions."),
+    '#title' => t("I have read and agree to all of the conditions outlined above."),
     '#required' => TRUE,
     '#weight' => 30,
   );
@@ -62,9 +85,16 @@ function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $for
     ),
   );
 
+  $form['delivery_pickup'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
+    '#required' => TRUE,
+    '#weight' => 30,
+  );
+
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
-    '#title' => t("I have read and agree to these conditions."),
+    '#title' => t("I have read and agree to all of the conditions outlined above."),
     '#required' => TRUE,
     '#weight' => 30,
   );

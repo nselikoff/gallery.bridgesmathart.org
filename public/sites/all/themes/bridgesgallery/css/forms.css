@@ -213,8 +213,3 @@ table#field-artwork-values td.field-multiple-drag {
 .tabledrag-toggle-weight-wrapper {
 	display:none;
 }
-
-/* hide 3rd entry (as of JMM 2017) */
-#field-artwork-values tr:nth-child(3) {
-	display: none;
-}
