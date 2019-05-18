@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Creates an autotitle token for use in submission titles (extended name or first/last name)
+ * Creates autotitle tokens for use in submission titles
  */
 
 /**
@@ -9,15 +9,20 @@
  */
 function bridges_autotitle_token_info() {
   // Define token value, autotitle is the token will be used as [node:autotitle]
-  $node_autotitle['autotitle'] =  array(
+  $node['autotitle'] =  array(
     'name' => t("Automatic submission title"),
     'description' => t("Use extended name if provided, otherwise use first and last name"),
+  );
+  // Define token value, fashion_autotitle is the token will be used as [node:fashion_autotitle]
+  $node['fashion_autotitle'] =  array(
+    'name' => t("Automatic submission title (fashion)"),
+    'description' => t("Use brand name if selected, otherwise use designer name"),
   );
 
   // Return associative array of tokens & token types
   return array(
     'tokens' => array(
-      'node' => $node_autotitle,
+      'node' => $node,
     ),
   );
 }
@@ -40,6 +45,13 @@ function bridges_autotitle_tokens($type, $tokens, array $data = array(), array $
           $last_name = $node_wrapper->field_last_name->value();
 
           $replacements[$original] = empty($extended_name) ? $first_name . " " . $last_name : $extended_name;
+          break;
+        case 'fashion_autotitle':
+          $use_brand_name = $node_wrapper->field_use_brand_name->value();
+          $name_designer = $node_wrapper->field_name_designer->value();
+          $name_brand = $node_wrapper->field_name_brand->value();
+
+          $replacements[$original] = $use_brand_name ? $name_brand : $name_designer;
           break;
       }
     }
