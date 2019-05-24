@@ -9,7 +9,15 @@
  * Implementation of HOOK_form_FORM_ID_alter()
  */
 function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state, $form_id) {
+  // hide/disable event dropdown
   $form['field_event']['#access']=FALSE;
+
+  // show event term at top of form so it's clear what's being submitted to
+  $default_value_index = $form['field_event'][LANGUAGE_NONE]['#default_value'][0];
+  $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
+  drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
+
+  // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
   $form['#attached'] = array
   (
@@ -46,7 +54,15 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
 
 
 function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_state, $form_id) {
+  // hide/disable event dropdown
   $form['field_event']['#access']=FALSE;
+
+  // show event term at top of form so it's clear what's being submitted to
+  $default_value_index = $form['field_event'][LANGUAGE_NONE]['#default_value'][0];
+  $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
+  drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
+
+  // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
   $form['#attached'] = array
   (
@@ -74,7 +90,15 @@ function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_
 }
 
 function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $form_state, $form_id) {
+  // hide/disable event dropdown
   $form['field_event']['#access']=FALSE;
+
+  // show event term at top of form so it's clear what's being submitted to
+  $default_value_index = $form['field_event'][LANGUAGE_NONE]['#default_value'][0];
+  $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
+  drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
+
+  // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
   $form['#attached'] = array
   (
