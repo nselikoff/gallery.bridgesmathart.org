@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Edit Unpublished install file.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function edit_unpublished_enable() {
+  node_access_needs_rebuild(TRUE);
+}
+
+/**
+ * Implements hook_disable().
+ */
+function edit_unpublished_disable() {
+  node_access_needs_rebuild(TRUE);
+  drupal_flush_all_caches();
+}

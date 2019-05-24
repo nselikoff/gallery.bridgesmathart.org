@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Edit Unpublished.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function edit_unpublished_permission() {
+  $permissions = array();
+  $content_type = node_permissions_get_configured_types();
+  // Generate override node permissions for all applicable node types.
+  foreach ($content_type as $type) {
+    $permissions += edit_unpublished_list_permissions($type);
+  }
+  return $permissions;
+}
+
+/**
+ * Implements hook_help().
+ */
+function edit_unpublished_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#edit_unpublished':
+      return '<p>' . t('This is a module allows you to grant access for specific user roles to edit or delete unpublished nodes of a specific type. You can edit or delete your own or any content.') . '</p>';
+  }
+}
+
+/**
+ * Helper function to generate override node permission list for a given type.
+ *
+ * @param string $type
+ *   The machine-readable name of the node type.
+ *
+ * @return array
+ *   An array of permission names and description.
+ */
+function edit_unpublished_list_permissions($type) {
+  $name = node_type_get_name(check_plain($type));
+
+  $permissions = array(
+    "update own unpublished $type content" => array(
+      'title' => t('update own unpublished %type_name content', array('%type_name' => $name)),
+    ),
+    "delete own unpublished $type content" => array(
+      'title' => t('delete own unpublished %type_name content', array('%type_name' => $name)),
+    ),
+    "update any unpublished $type content" => array(
+      'title' => t('update any unpublished %type_name content', array('%type_name' => $name)),
+    ),
+    "delete any unpublished $type content" => array(
+      'title' => t('delete any unpublished %type_name content', array('%type_name' => $name)),
+    ),
+  );
+  return $permissions;
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function edit_unpublished_node_access($node, $op, $account) {
+  if (is_object($node)) {
+    if ($node->status || !in_array($op, array('delete', 'update'))) {
+      return NODE_ACCESS_IGNORE;
+    }
+    if (user_access($op . ' any unpublished ' . $node->type . ' content')) {
+      return NODE_ACCESS_ALLOW;
+    }
+    if (($node->uid == $account->uid) && user_access($op . ' own unpublished ' . $node->type . ' content')) {
+      return NODE_ACCESS_ALLOW;
+    }
+  }
+}

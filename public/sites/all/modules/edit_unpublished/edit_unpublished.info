@@ -1,0 +1,11 @@
+name = Edit Unpublished
+description = "Allow non-admins to delete or to edit unpublished content"
+core = 7.x
+package = Permissions
+
+; Information added by Drupal.org packaging script on 2016-05-31
+version = "7.x-1.0"
+core = "7.x"
+project = "edit_unpublished"
+datestamp = "1464683650"
+
