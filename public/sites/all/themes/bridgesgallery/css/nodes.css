@@ -90,6 +90,7 @@ h2.node-title /* Node title */ {
 .node-submission .field-name-field-computed-dimensions,
 .node-submission .field-name-field-medium,
 .node-submission .field-name-field-year,
+.node-submission .field-name-field-more-information,
 .node-movie-submission .field-name-field-movie-image,
 .node-movie-submission .field-name-field-title,
 .node-movie-submission .field-name-field-length,
@@ -109,7 +110,7 @@ h2.node-title /* Node title */ {
 .node-submission .field-name-field-statement,
 .node-movie-submission .field-name-field-statement
 {
-	margin:2.0em 0;	
+	margin:2.0em 0;
 }
 
 .node-submission .field-name-field-description,
