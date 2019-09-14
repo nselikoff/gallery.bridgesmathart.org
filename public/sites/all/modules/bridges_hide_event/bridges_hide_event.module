@@ -10,7 +10,19 @@
  * Implementation of HOOK_form_FORM_ID_alter()
  */
 function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state, $form_id) {
+
   // hide ICERM terms for bridges submissions (temporary)
+
+  ///////////////////////////
+  // fields for submission //
+  ///////////////////////////
+
+  // hide ICERM specific fields
+  $form['field_icerm_dates']['#access'] = FALSE;
+
+  ///////////////////////////
+  // fields within artwork //
+  ///////////////////////////
   foreach ($form['field_artwork'][LANGUAGE_NONE] as $delta => $field) {
     if (is_numeric($delta)) {
       // hide Bridges/JMM specific fields
@@ -18,9 +30,9 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
 
       // hide ICERM specific fields
       $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category_icerm']['#access'] = FALSE;
-      $form['field_artwork'][LANGUAGE_NONE][$delta]['field_icerm_dates']['#access'] = FALSE;
     }
   }
+
 
   // hide/disable event dropdown
   $form['field_event']['#access']=FALSE;
