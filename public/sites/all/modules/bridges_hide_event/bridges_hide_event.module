@@ -3,17 +3,21 @@
  * @file
  * Hides the event field from the add submission and add movie submission form
  * Adds required checkboxes that aren't actually part of the content type
- * Hide Bridges terms (ICERM has different terms)
+ * Hide ICERM terms (Bridges has different terms)
  */
 
 /**
  * Implementation of HOOK_form_FORM_ID_alter()
  */
 function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state, $form_id) {
-  // hide bridges terms for ICERM submissions (temporary)
+  // hide ICERM terms for bridges submissions (temporary)
   foreach ($form['field_artwork'][LANGUAGE_NONE] as $delta => $field) {
     if (is_numeric($delta)) {
-      $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category']['#access'] = FALSE;
+      // hide Bridges terms
+      // $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category']['#access'] = FALSE;
+
+      // hide ICERM terms
+      $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category_icerm']['#access'] = FALSE;
     }
   }
 
@@ -51,9 +55,8 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   );
 
   // artworks are set to unlimited so we get the "add more" button
-  // but we want to limit to [2 for Bridges/JMM, 5 for ICERM], so hide the button when we get to 8
-  // set to N - 1
-  if (isset($form['field_artwork']['und']['#max_delta']) && $form['field_artwork']['und']['#max_delta'] == 4) {
+  // but we want to limit to [2 for Bridges/JMM, 5 for ICERM], so hide the button when we get to N - 1
+  if (isset($form['field_artwork']['und']['#max_delta']) && $form['field_artwork']['und']['#max_delta'] == 1) {
     $form['field_artwork']['und']['add_more']['#prefix'] = '<div style="display:none">';
     $form['field_artwork']['und']['add_more']['#suffix'] = '</div>';
   }
