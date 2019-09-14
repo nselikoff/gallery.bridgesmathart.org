@@ -13,11 +13,12 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   // hide ICERM terms for bridges submissions (temporary)
   foreach ($form['field_artwork'][LANGUAGE_NONE] as $delta => $field) {
     if (is_numeric($delta)) {
-      // hide Bridges terms
+      // hide Bridges/JMM specific fields
       // $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category']['#access'] = FALSE;
 
-      // hide ICERM terms
+      // hide ICERM specific fields
       $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category_icerm']['#access'] = FALSE;
+      $form['field_artwork'][LANGUAGE_NONE][$delta]['field_icerm_dates']['#access'] = FALSE;
     }
   }
 
