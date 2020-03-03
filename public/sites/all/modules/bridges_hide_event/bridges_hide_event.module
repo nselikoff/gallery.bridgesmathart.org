@@ -40,7 +40,7 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   // show event term at top of form so it's clear what's being submitted to
   $default_value_index = $form['field_event'][LANGUAGE_NONE]['#default_value'][0];
   $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
-  drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
+  drupal_set_title(t('Create submission: ' . $default_value));
 
   // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
