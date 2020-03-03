@@ -86,6 +86,17 @@ function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_
   $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
   drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
 
+  /////////////////////////////////////
+  // fields within field collections //
+  /////////////////////////////////////
+  foreach ($form['field_fashion_items'][LANGUAGE_NONE] as $delta => $field) {
+    if (is_numeric($delta)) {
+      // hide fields we used first year but not subsequently
+      $form['field_fashion_items'][LANGUAGE_NONE][$delta]['field_fashion_item_image']['#access'] = FALSE;
+      $form['field_fashion_items'][LANGUAGE_NONE][$delta]['field_credits']['#access'] = FALSE;
+    }
+  }
+
   // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
   $form['#attached'] = array
@@ -120,7 +131,7 @@ function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $for
   // show event term at top of form so it's clear what's being submitted to
   $default_value_index = $form['field_event'][LANGUAGE_NONE]['#default_value'][0];
   $default_value = $form['field_event'][LANGUAGE_NONE]['#options'][$default_value_index];
-  drupal_set_title(t('Create ' . $form['type']['#value'] . ': ' . $default_value));
+  drupal_set_title(t('Create submission: ' . $default_value));
 
   // load custom js for form
   $path = drupal_get_path('module', 'bridges_hide_event');
@@ -142,7 +153,7 @@ function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $for
 
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
-    '#title' => t("I have read and agree to all of the conditions outlined above."),
+    '#title' => t("I have read and agree to the conditions outlined above and in the submission instructions."),
     '#required' => TRUE,
     '#weight' => 30,
   );
