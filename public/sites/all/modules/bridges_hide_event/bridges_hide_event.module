@@ -89,11 +89,11 @@ function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_
   /////////////////////////////////////
   // fields within field collections //
   /////////////////////////////////////
-  foreach ($form['field_fashion_items'][LANGUAGE_NONE] as $delta => $field) {
+  foreach ($form['field_fashion_item'][LANGUAGE_NONE] as $delta => $field) {
     if (is_numeric($delta)) {
       // hide fields we used first year but not subsequently
-      $form['field_fashion_items'][LANGUAGE_NONE][$delta]['field_fashion_item_image']['#access'] = FALSE;
-      $form['field_fashion_items'][LANGUAGE_NONE][$delta]['field_credits']['#access'] = FALSE;
+      $form['field_fashion_item'][LANGUAGE_NONE][$delta]['field_fashion_item_image']['#access'] = FALSE;
+      $form['field_fashion_item'][LANGUAGE_NONE][$delta]['field_credits']['#access'] = FALSE;
     }
   }
 
