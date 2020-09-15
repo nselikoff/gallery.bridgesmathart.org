@@ -53,12 +53,14 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   ),
  );
 
+  /*
   $form['delivery_pickup'] = array(
     '#type' => 'checkbox',
     '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
     '#required' => TRUE,
     '#weight' => 30,
   );
+   */
 
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
@@ -97,12 +99,14 @@ function bridges_hide_event_form_movie_submission_node_form_alter(&$form, $form_
     ),
   );
 
+  /*
   $form['delivery_pickup'] = array(
     '#type' => 'checkbox',
     '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
     '#required' => TRUE,
     '#weight' => 30,
   );
+   */
 
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
@@ -144,12 +148,14 @@ function bridges_hide_event_form_fashion_submission_node_form_alter(&$form, $for
     ),
   );
 
+  /*
   $form['delivery_pickup'] = array(
     '#type' => 'checkbox',
     '#title' => t("I understand that I am responsible for the timely delivery and pick-up of all works including any necessary shipping arrangements and subsequent costs incurred."),
     '#required' => TRUE,
     '#weight' => 30,
   );
+   */
 
   $form['terms_of_use'] = array(
     '#type' => 'checkbox',
