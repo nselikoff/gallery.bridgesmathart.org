@@ -25,8 +25,11 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
   ///////////////////////////
   foreach ($form['field_artwork'][LANGUAGE_NONE] as $delta => $field) {
     if (is_numeric($delta)) {
-      // hide Bridges/JMM specific fields
-      // $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category']['#access'] = FALSE;
+	    // hide Bridges/JMM specific fields
+	    // Jan 2021: hiding this for Bridges
+	    $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category']['#access'] = FALSE;
+	    // Jan 2021: also hiding "Other Math Category" field
+	    $form['field_artwork'][LANGUAGE_NONE][$delta]['field_other_math_category']['#access'] = FALSE;
 
       // hide ICERM specific fields
       $form['field_artwork'][LANGUAGE_NONE][$delta]['field_math_category_icerm']['#access'] = FALSE;
