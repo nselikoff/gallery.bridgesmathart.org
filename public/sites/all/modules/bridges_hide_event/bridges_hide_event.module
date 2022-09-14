@@ -74,7 +74,8 @@ function bridges_hide_event_form_submission_node_form_alter(&$form, $form_state,
 
   // artworks are set to unlimited so we get the "add more" button
   // but we want to limit to [1 for Bridges 2020, 2 for Bridges/JMM, 5 for ICERM], so hide the button when we get to N - 1
-  if (isset($form['field_artwork']['und']['#max_delta']) && $form['field_artwork']['und']['#max_delta'] == 1) {
+  // Feb 2022: 0 for Bridges 2022 (1 artwork allowed)
+  if (isset($form['field_artwork']['und']['#max_delta']) && $form['field_artwork']['und']['#max_delta'] == 0) {
     $form['field_artwork']['und']['add_more']['#prefix'] = '<div style="display:none">';
     $form['field_artwork']['und']['add_more']['#suffix'] = '</div>';
   }
